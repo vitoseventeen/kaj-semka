@@ -1,6 +1,13 @@
-html, body {
-    background-color: blue;
+body {
+    background-color: dimgrey;
+    border-radius: 30px;
     font-family: 'Consolas', cursive;
+    width: 50%;
+    margin: auto;
+    padding-bottom: 10px;
+}
+html {
+    background-image: url("background.png");
 }
 
 .container {
@@ -9,7 +16,7 @@ html, body {
 
 .greeting {
     font-size: 42px;
-    background-color: sandybrown;
+
     color: white;
 }
 
@@ -24,6 +31,38 @@ html, body {
     margin: 10vh;
 }
 
+.main-section {
+    text-align: center;
+}
+
+.main-section h2 {
+    color:navajowhite;
+}
+
+.play-button {
+    background-color: white;
+    padding: 10px;
+    border-radius: 8px;
+    min-height: 5vh;
+    min-width: 5vh;
+    font-size: larger;
+    font-family: 'consolas', serif;
+}
+
+.game-area {
+    margin: 10px;
+}
+
+.game-area input {
+    border-radius: 10px;
+    height: 40px;
+    border-color: white;
+    border-width: 3px;
+    box-shadow: none;
+}
+.game-area input:hover {
+    border-color: black;
+}
 
 .footer {
     position: fixed;
