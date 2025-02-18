@@ -18,6 +18,7 @@ class TypingGame {
         this.totalChars = 0;
         this.overallStartTime = Date.now();
         this.nextWord();
+        playButton.hidden = true;
     }
 
     nextWord() {
