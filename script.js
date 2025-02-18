@@ -48,6 +48,7 @@ class TypingGame {
     }
 
     async startGame() {
+        playButton.hidden = true;
         this.currentIndex = 0;
         this.totalChars = 0;
         this.timeLimit = 60;
@@ -55,7 +56,7 @@ class TypingGame {
         await this.loadWords();
         this.startTimer();
         this.nextWord();
-        playButton.hidden = true;
+
     }
 
     nextWord() {

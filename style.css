@@ -83,14 +83,19 @@ body {
     max-width: 500px;
 }
 
+
+
+
+
 #timer {
     font-size: 24px;
     margin-bottom: 10px;
-    color: #333;
+    color: red;
 }
 
 #word-display {
     font-size: 28px;
+    min-height: 40px;
     margin-bottom: 10px;
     color: #333;
 }
