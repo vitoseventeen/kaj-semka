@@ -1,75 +1,117 @@
-body {
-    background-color: dimgrey;
-    border-radius: 30px;
-    font-family: 'Consolas', cursive;
-    width: 50%;
-    margin: auto;
-    padding-bottom: 10px;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
+
 html {
-    background-image: url("background.png");
+    background: url("background.png") no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Consolas', sans-serif;
+}
+
+body {
+    background-color: rgba(47, 47, 47, 0.8);
+    width: 80%;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .container {
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .greeting {
     font-size: 42px;
-
-    color: white;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
 }
 
 .nav-items {
-    font-size: 26px;
     list-style: none;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .nav-item a {
-    color: white;
-    margin: 10vh;
+    color: #fff;
+    margin: 0 20px;
+    text-decoration: none;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.nav-item a:hover {
+    color: #ffcc00;
 }
 
 .main-section {
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .main-section h2 {
-    color:navajowhite;
+    color: #f0e68c;
+    margin-bottom: 15px;
 }
 
 .play-button {
-    background-color: white;
-    padding: 10px;
+    background-color: #fff;
+    padding: 12px 25px;
     border-radius: 8px;
-    min-height: 5vh;
-    min-width: 5vh;
-    font-size: larger;
-    font-family: 'consolas', serif;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.play-button:hover {
+    background-color: #f0e68c;
+    transform: scale(1.05);
 }
 
 .game-area {
-    margin: 10px;
+    margin: 15px auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.game-area p {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.game-area label {
+    font-size: 16px;
+    margin-right: 10px;
 }
 
 .game-area input {
+    width: 60%;
+    padding: 10px;
     border-radius: 10px;
-    height: 40px;
-    border-color: white;
-    border-width: 3px;
-    box-shadow: none;
+    border: 2px solid #ccc;
+    font-size: 16px;
+    transition: border-color 0.3s;
 }
-.game-area input:hover {
-    border-color: black;
+
+.game-area input:focus {
+    outline: none;
 }
 
 .footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    margin-bottom: 5px;
-    color: white;
     text-align: center;
+    color: #fff;
+    font-size: 14px;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
