@@ -1,10 +1,11 @@
 const wordDisplay = document.getElementById("word-display");
 const gameInput = document.getElementById("game-input");
+const gameInputLabel = document.getElementById("game-input-label");
 const timerDisplay = document.getElementById("timer");
 const gameArea = document.getElementById("game-area");
 const gameHeader = document.getElementById("game-header");
 const playButton = document.getElementById("play-button");
-const GAME_TIME = 60;
+const GAME_TIME = 60; // 60 seconds for default game
 
 async function loadRandomWords() {
     try {
@@ -76,7 +77,10 @@ class TypingGame {
         await this.loadWords();
         this.startTimer();
         this.nextWord();
-
+        if (gameInput.hidden || gameInputLabel.hidden) {
+            gameInput.hidden = false;
+            gameInputLabel.hidden = false;
+        }
     }
 
     nextWord() {
@@ -94,14 +98,20 @@ class TypingGame {
     // TODO: add user to scoreboard
     finishGame() {
         if (this.timerId) clearInterval(this.timerId);
+
         this.clockSound.pause();
         this.ringSound.play();
+        this.timerDisplay.classList.remove("low-time");
+
         const overallEndTime = Date.now();
         const elapsedTime = (overallEndTime - this.overallStartTime) / 1000;
         const cpm = (this.totalChars / elapsedTime) * GAME_TIME;
         this.wordDisplay.textContent = `Your result is: ${Math.round(cpm)} symbols per minute!`;
+
         playButton.innerText = "Play again";
         playButton.hidden = false;
+        gameInput.hidden = true;
+        gameInputLabel.hidden = true;
     }
 
     checkInput() {
