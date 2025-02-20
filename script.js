@@ -1,3 +1,11 @@
+const wordDisplay = document.getElementById("word-display");
+const gameInput = document.getElementById("game-input");
+const timerDisplay = document.getElementById("timer");
+const gameArea = document.getElementById("game-area");
+const gameHeader = document.getElementById("game-header");
+const playButton = document.getElementById("play-button");
+const GAME_TIME = 60;
+
 async function loadRandomWords() {
     try {
         const response = await fetch('https://random-word-api.vercel.app/api?words=120');
@@ -24,12 +32,15 @@ class TypingGame {
         this.currentWord = "";
         this.overallStartTime = null;
         this.totalChars = 0;
-        this.timeLimit = 60;
+        this.timeLimit = GAME_TIME;
         this.timerId = null;
 
-        this.correctSound = new Audio("correct.mp3");
-        this.incorrectSound = new Audio("incorrect.mp3");
+        this.correctSound = new Audio("sounds/correct.mp3");
+        this.incorrectSound = new Audio("sounds/incorrect.mp3");
+        this.clockSound = new Audio("sounds/clock.mp3");
+        this.ringSound = new Audio("sounds/ring.mp3");
     }
+
 
     async loadWords() {
         this.words = await loadRandomWords();
@@ -40,6 +51,14 @@ class TypingGame {
         this.timerId = setInterval(() => {
             this.timeLimit--;
             this.timerDisplay.textContent = this.timeLimit;
+
+            if (this.timeLimit <= 10) {
+                this.clockSound.play();
+                this.timerDisplay.classList.add("low-time");
+            } else {
+                this.timerDisplay.classList.remove("low-time");
+            }
+
             if (this.timeLimit <= 0) {
                 clearInterval(this.timerId);
                 this.finishGame();
@@ -47,11 +66,12 @@ class TypingGame {
         }, 1000);
     }
 
+
     async startGame() {
         playButton.hidden = true;
         this.currentIndex = 0;
         this.totalChars = 0;
-        this.timeLimit = 60;
+        this.timeLimit = GAME_TIME;
         this.overallStartTime = Date.now();
         await this.loadWords();
         this.startTimer();
@@ -74,10 +94,12 @@ class TypingGame {
     // TODO: add user to scoreboard
     finishGame() {
         if (this.timerId) clearInterval(this.timerId);
+        this.clockSound.pause();
+        this.ringSound.play();
         const overallEndTime = Date.now();
         const elapsedTime = (overallEndTime - this.overallStartTime) / 1000;
-        const cpm = (this.totalChars / elapsedTime) * 60;
-        alert(`Game over! Your result is: ${Math.round(cpm)} symbols per minute!`);
+        const cpm = (this.totalChars / elapsedTime) * GAME_TIME;
+        this.wordDisplay.textContent = `Your result is: ${Math.round(cpm)} symbols per minute!`;
         playButton.innerText = "Play again";
         playButton.hidden = false;
     }
@@ -87,9 +109,15 @@ class TypingGame {
 
         if (this.currentWord.startsWith(inputValue)) {
             this.gameInput.style.borderColor = "green";
+            this.gameInput.classList.remove("shake");
         } else {
             this.gameInput.style.borderColor = "red";
             this.incorrectSound.play();
+
+            this.gameInput.classList.add("shake");
+            setTimeout(() => {
+                this.gameInput.classList.remove("shake");
+            }, 500);
         }
 
         if (inputValue === this.currentWord) {
@@ -100,13 +128,6 @@ class TypingGame {
         }
     }
 }
-
-const wordDisplay = document.getElementById("word-display");
-const gameInput = document.getElementById("game-input");
-const timerDisplay = document.getElementById("timer");
-const gameArea = document.getElementById("game-area");
-const gameHeader = document.getElementById("game-header");
-const playButton = document.getElementById("play-button");
 
 const game = new TypingGame(wordDisplay, gameInput, timerDisplay);
 
