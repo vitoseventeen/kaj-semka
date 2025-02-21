@@ -5,7 +5,7 @@ const timerDisplay = document.getElementById("timer");
 const gameArea = document.getElementById("game-area");
 const gameHeader = document.getElementById("game-header");
 const playButton = document.getElementById("play-button");
-const GAME_TIME = 60; // 60 seconds for default game
+const GAME_TIME = 60;
 
 async function loadRandomWords() {
     try {
@@ -14,7 +14,7 @@ async function loadRandomWords() {
     } catch (error) {
         console.error('Error fetching words:', error);
         try {
-            const localResponse = await fetch('words.json')
+            const localResponse = await fetch('words.json');
             return await localResponse.json();
         } catch (localError) {
             console.error('Error fetching local words:', localError);
@@ -35,6 +35,7 @@ class TypingGame {
         this.totalChars = 0;
         this.timeLimit = GAME_TIME;
         this.timerId = null;
+        this.isErrorPlaying = false;
 
         this.correctSound = new Audio("sounds/correct.mp3");
         this.incorrectSound = new Audio("sounds/incorrect.mp3");
@@ -42,9 +43,32 @@ class TypingGame {
         this.ringSound = new Audio("sounds/ring.mp3");
     }
 
-
     async loadWords() {
         this.words = await loadRandomWords();
+    }
+
+    renderWords() {
+        let html = "";
+        const currentWord = this.words[this.currentIndex] || "";
+        let renderedCurrent = "";
+        for (let i = 0; i < currentWord.length; i++) {
+            const letter = currentWord[i];
+            const typedLetter = this.gameInput.value[i] || "";
+            if (typedLetter === letter) {
+                renderedCurrent += `<span class="correct-letter">${letter}</span>`;
+            } else {
+                renderedCurrent += `<span>${letter}</span>`;
+            }
+        }
+        html += `<span class="current-word">${renderedCurrent}</span>`;
+
+        for (let j = 1; j < 3; j++) {
+            const nextWord = this.words[this.currentIndex + j];
+            if (nextWord) {
+                html += ` <span class="future-word">${nextWord}</span>`;
+            }
+        }
+        this.wordDisplay.innerHTML = html;
     }
 
     startTimer() {
@@ -67,7 +91,6 @@ class TypingGame {
         }, 1000);
     }
 
-
     async startGame() {
         playButton.hidden = true;
         this.currentIndex = 0;
@@ -86,19 +109,17 @@ class TypingGame {
     nextWord() {
         if (this.currentIndex < this.words.length) {
             this.currentWord = this.words[this.currentIndex];
-            this.wordDisplay.textContent = this.currentWord;
             this.gameInput.value = "";
             this.gameInput.style.borderColor = "#ccc";
             this.gameInput.focus();
+            this.renderWords();
         } else {
             this.finishGame();
         }
     }
 
-    // TODO: add user to scoreboard
     finishGame() {
         if (this.timerId) clearInterval(this.timerId);
-
         this.clockSound.pause();
         this.ringSound.play();
         this.timerDisplay.classList.remove("low-time");
@@ -116,25 +137,35 @@ class TypingGame {
 
     checkInput() {
         const inputValue = this.gameInput.value;
+        const currentWord = this.words[this.currentIndex] || "";
 
-        if (this.currentWord.startsWith(inputValue)) {
+        if (currentWord.startsWith(inputValue)) {
             this.gameInput.style.borderColor = "green";
             this.gameInput.classList.remove("shake");
         } else {
             this.gameInput.style.borderColor = "red";
-            this.incorrectSound.play();
-
+            if (!this.isErrorPlaying) {
+                this.incorrectSound.play();
+                this.isErrorPlaying = true;
+                setTimeout(() => { this.isErrorPlaying = false; }, 300);
+            }
             this.gameInput.classList.add("shake");
             setTimeout(() => {
                 this.gameInput.classList.remove("shake");
-            }, 500);
+            }, 300);
         }
 
-        if (inputValue === this.currentWord) {
+        this.renderWords();
+
+        if (inputValue === currentWord) {
             this.correctSound.play();
-            this.totalChars += this.currentWord.length;
+            this.wordDisplay.classList.add("fade-out");
+            this.totalChars += currentWord.length;
             this.currentIndex++;
-            setTimeout(() => this.nextWord(), 300);
+            setTimeout(() => {
+                this.wordDisplay.classList.remove("fade-out");
+                this.nextWord();
+            }, 300);
         }
     }
 }
