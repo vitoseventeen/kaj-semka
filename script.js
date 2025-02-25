@@ -129,6 +129,8 @@ class TypingGame {
         const cpm = (this.totalChars / elapsedTime) * GAME_TIME;
         this.wordDisplay.textContent = `Your result is: ${Math.round(cpm)} symbols per minute!`;
 
+        localStorage.setItem("result",cpm.toString());
+
         playButton.innerText = "Play again";
         playButton.hidden = false;
         gameInput.hidden = true;
