@@ -6,6 +6,14 @@ const gameArea = document.getElementById("game-area");
 const gameHeader = document.getElementById("game-header");
 const playButton = document.getElementById("play-button");
 const GAME_TIME = 60;
+const playPage = document.getElementById("play-page");
+const scoreboardPage = document.getElementById("scoreboard-page");
+const showScoreboardPage = document.getElementById("a-scoreboard");
+const showPlayPage = document.getElementById("a-play");
+
+/// scoreboard
+
+
 
 async function loadRandomWords() {
     try {
@@ -172,7 +180,7 @@ class TypingGame {
     }
 }
 
-const game = new TypingGame(wordDisplay, gameInput, timerDisplay);
+let game = new TypingGame(wordDisplay, gameInput, timerDisplay);
 
 playButton.addEventListener("click", () => {
     gameArea.hidden = false;
@@ -182,4 +190,16 @@ playButton.addEventListener("click", () => {
 
 gameInput.addEventListener("input", () => {
     game.checkInput();
+});
+
+showScoreboardPage.addEventListener("click", () => {
+    playPage.hidden = true;
+    scoreboardPage.hidden = false;
+    // stop game
+    game.finishGame();
+});
+
+showPlayPage.addEventListener("click", () => {
+    playPage.hidden = false;
+    scoreboardPage.hidden = true;
 });

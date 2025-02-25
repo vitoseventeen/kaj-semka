@@ -15,27 +15,29 @@
 <nav class="nav">
     <ul class="nav-items">
         <li class="nav-item">
-            <a href="#">Play</a>
-            <a href="#">Scoreboard</a>
+            <a href="#" id="a-play">Play</a>
+            <a href="#" id="a-scoreboard">Scoreboard</a>
             <a href="#">About Us</a>
         </li>
     </ul>
 </nav>
 <main>
     <section class="main-section">
-        <h2 id="game-header">Play the game</h2>
-        <div class="game-area" id="game-area" hidden>
-            <p id="timer"></p>
-            <p id="word-display"></p>
-            <label for="game-input" id="game-input-label">Type the word:</label>
-            <input class="game-input" type="text" id="game-input">
+        <div id="play-page">
+            <h2 id="game-header">Play the game</h2>
+            <div class="game-area" id="game-area" hidden>
+                <p id="timer"></p>
+                <p id="word-display"></p>
+                <label for="game-input" id="game-input-label">Type the word:</label>
+                <input class="game-input" type="text" id="game-input">
+            </div>
+            <button type="button" id="play-button" class="play-button">Start</button>
         </div>
-        <button type="button" id="play-button" class="play-button">Start</button>
     </section>
 
-    <section class="scoreboard-section">
+    <div id="scoreboard-page">
         <p id="user-result"></p>
-    </section>
+    </div>
 </main>
 <footer class="footer">
     Created by Vitalii Stepaniuk &copy; 2025
