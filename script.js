@@ -10,9 +10,9 @@ const playPage = document.getElementById("play-page");
 const scoreboardPage = document.getElementById("scoreboard-page");
 const showScoreboardPage = document.getElementById("a-scoreboard");
 const showPlayPage = document.getElementById("a-play");
+const resetButton = document.getElementById("reset-button");
 
 /// scoreboard
-
 
 
 async function loadRandomWords() {
@@ -49,7 +49,9 @@ class TypingGame {
         this.incorrectSound = new Audio("sounds/incorrect.mp3");
         this.clockSound = new Audio("sounds/clock.mp3");
         this.ringSound = new Audio("sounds/ring.mp3");
+
     }
+
 
     async loadWords() {
         this.words = await loadRandomWords();
@@ -192,14 +194,28 @@ gameInput.addEventListener("input", () => {
     game.checkInput();
 });
 
-showScoreboardPage.addEventListener("click", () => {
+function showResult() {
     playPage.hidden = true;
     scoreboardPage.hidden = false;
-    // stop game
-    game.finishGame();
-});
+    // FIXME: STOP GAME IF IT IS RUNNING
+
+    let result = Math.round(localStorage.getItem("result"));
+    let resultArea = document.getElementById("result-area");
+    if (result !== 0) {
+        resultArea.style = "color: #4ffa62";
+        resultArea.textContent = `Your last result is: ${result} symbols per minute!`;
+        resetButton.hidden = false;
+    } else {
+        resultArea.style = "color: red";
+        resultArea.textContent = "You haven't played yet!";
+        resetButton.hidden = true;
+    }
+}
+
+showScoreboardPage.addEventListener("click", showResult);
 
 showPlayPage.addEventListener("click", () => {
     playPage.hidden = false;
     scoreboardPage.hidden = true;
+
 });
