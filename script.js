@@ -1,4 +1,8 @@
-/* TODO: add nickname, date and time to the scoreboard,sound for background, different languages.
+/* TODO: add nickname,
+    date and time to the scoreboard,
+    sound for background,
+    different languages.
+    ADD ERROR COUNT
 */
 
 const wordDisplay = document.getElementById("word-display");
