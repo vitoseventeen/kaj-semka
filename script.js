@@ -1,5 +1,4 @@
-/* TODO: add nickname,
-    date and time to the scoreboard,
+/* TODO:
     sound for background,
     different languages.
     ADD ERROR COUNT
@@ -27,8 +26,8 @@ const loginPictureInput = document.getElementById("login-picture");
 const loginPictureLabel = document.getElementById("login-picture-label");
 const loginButton = document.getElementById("login-button");
 
-
-const GAME_TIME = 60;
+// TODO: set back to 60 sec
+const GAME_TIME = 15;
 
 async function loadRandomWords() {
     try {
@@ -140,6 +139,32 @@ class TypingGame {
             this.finishGame();
         }
     }
+    saveScore(score) {
+        // Retrieve existing scoreboard or initialize an empty array
+        let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
+        const nickname = localStorage.getItem("nickname") || "Anonymous";
+        const avatar = localStorage.getItem("avatar") || "default_avatar.png";
+        // Get the current date in a readable English format
+        const currentDate = new Date().toLocaleString('en-GB', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+
+        // Add the new record
+        scoreboard.push({
+            avatar: avatar,
+            nickname: nickname,
+            score: score,
+            date: currentDate
+        });
+        // Sort by highest score first
+        scoreboard.sort((a, b) => b.score - a.score);
+        localStorage.setItem("scoreboard", JSON.stringify(scoreboard));
+    }
 
     finishGame() {
         if (this.timerId) clearInterval(this.timerId);
@@ -151,13 +176,19 @@ class TypingGame {
         const overallEndTime = Date.now();
         const elapsedTime = (overallEndTime - this.overallStartTime) / 1000;
         const cpm = (this.totalChars / elapsedTime) * GAME_TIME;
-        this.wordDisplay.textContent = `Your result is: ${Math.round(cpm)} symbols per minute!`;
-        localStorage.setItem("result", cpm.toString());
+        const roundedScore = Math.round(cpm);
+        this.wordDisplay.textContent = `Your result is: ${roundedScore} symbols per minute!`;
+        localStorage.setItem("result", roundedScore.toString());
+
+        // Save the score into the scoreboard
+        this.saveScore(roundedScore);
+
         playButton.innerText = "Play again";
         playButton.hidden = false;
         gameInput.hidden = true;
         gameInputLabel.hidden = true;
     }
+
 
     pauseGame() {
         if (this.timerId) {
@@ -211,6 +242,8 @@ class TypingGame {
             }, 50);
         }
     }
+
+
 }
 
 let game = new TypingGame(wordDisplay, gameInput, timerDisplay);
@@ -237,27 +270,63 @@ function handlePageSwitch(callback) {
 function showResult() {
     playPage.hidden = true;
     scoreboardPage.hidden = false;
-    let result = Number(Math.round(localStorage.getItem("result"))) || 0;
-    let resultArea = document.getElementById("result-area");
-    if (result > 0) {
-        resultArea.style.color = "#4ffa62";
-        resultArea.textContent = `Your last result is: ${result} symbols per minute!`;
-        resetButton.hidden = false;
+
+    const scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
+    const tableBody = document.querySelector("#scoreboard-table tbody");
+    tableBody.innerHTML = "";
+
+    if (scoreboard.length > 0) {
+        scoreboard.forEach(entry => {
+            const tr = document.createElement("tr");
+
+            // Avatar
+            const tdAvatar = document.createElement("td");
+            const img = document.createElement("img");
+            img.src = entry.avatar;
+            img.alt = "Avatar";
+            img.width = 50;
+            img.height = 50;
+            tdAvatar.appendChild(img);
+            tr.appendChild(tdAvatar);
+
+            // Nickname
+            const tdNickname = document.createElement("td");
+            tdNickname.textContent = entry.nickname;
+            tr.appendChild(tdNickname);
+
+            // Typing Speed (score)
+            const tdScore = document.createElement("td");
+            tdScore.textContent = entry.score + " spm";
+            tr.appendChild(tdScore);
+
+            // Date
+            const tdDate = document.createElement("td");
+            tdDate.textContent = entry.date;
+            tr.appendChild(tdDate);
+
+            tableBody.appendChild(tr);
+        });
     } else {
-        resetButton.hidden = true;
-        resultArea.style.color = "red";
-        resultArea.textContent = "You haven't played yet!";
+        // Message when there are no scores yet
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 4;
+        td.textContent = "No scores yet!";
+        tr.appendChild(td);
+        tableBody.appendChild(tr);
     }
 }
+
 
 showScoreboardPage.addEventListener("click", () => {
     handlePageSwitch(showResult);
 });
 
 resetButton.addEventListener("click", () => {
-    localStorage.setItem("result", "0");
+    localStorage.removeItem("scoreboard");
     showResult();
 });
+
 
 showPlayPage.addEventListener("click", () => {
     handlePageSwitch(() => {
@@ -309,15 +378,27 @@ loginButton.addEventListener("click", () => {
         alert("Please enter a nickname between 3 and 20 characters.");
         return;
     }
-    // reset picture if file is not an image
     let file = loginPictureInput.files[0];
-    if (file !== undefined) {
+    if (file) {
         if (!file.type.startsWith("image/")) {
             loginPictureInput.value = "";
             alert("Please upload an image file.");
             return;
         }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            localStorage.setItem("nickname", nickname);
+            localStorage.setItem("avatar", e.target.result);
+            document.getElementById("login-page").hidden = true;
+            document.getElementById("play-page").hidden = false;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // Use a default avatar if none is provided
+        localStorage.setItem("nickname", nickname);
+        localStorage.setItem("avatar", "default_avatar.png");
+        document.getElementById("login-page").hidden = true;
+        document.getElementById("play-page").hidden = false;
     }
-    document.getElementById("login-page").hidden = true;
-    document.getElementById("play-page").hidden = false;
 });
+

@@ -96,6 +96,62 @@ body {
     transition: color 0.5s ease;
 }
 
+/* Scoreboard Table Styles */
+#scoreboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#scoreboard-table thead {
+    background-color: #296a0a;
+}
+
+#scoreboard-table th,
+#scoreboard-table td {
+    padding: 12px 15px;
+    text-align: center;
+}
+
+#scoreboard-table th {
+    font-size: 18px;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+#scoreboard-table tbody tr {
+    border-bottom: 1px solid #ddd;
+    transition: background 0.3s ease;
+}
+
+#scoreboard-table tbody tr:hover {
+    background: rgba(79, 255, 98, 0.3);
+}
+
+#scoreboard-table tbody td {
+    font-size: 16px;
+    color: #333;
+}
+
+#scoreboard-table img {
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 600px) {
+    #scoreboard-table th,
+    #scoreboard-table td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+}
+
+
 .play-button, .login-button {
     background-color: #fff;
     padding: 12px 25px;
