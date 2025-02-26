@@ -269,3 +269,26 @@ window.addEventListener('beforeunload', (e) => {
         e.returnValue = '';
     }
 });
+
+// login page
+
+const loginPictureInput = document.getElementById("login-picture");
+const loginPictureLabel = document.getElementById("login-picture-label");
+
+loginPictureLabel.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    loginPictureLabel.classList.add("dragover");
+});
+
+loginPictureLabel.addEventListener("dragleave", () => {
+    loginPictureLabel.classList.remove("dragover");
+});
+
+loginPictureLabel.addEventListener("drop", (e) => {
+    e.preventDefault();
+    loginPictureLabel.classList.remove("dragover");
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        loginPictureInput.files = e.dataTransfer.files;
+        e.dataTransfer.clearData();
+    }
+});

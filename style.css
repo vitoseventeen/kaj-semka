@@ -62,6 +62,28 @@ body {
     transition: color 0.5s ease;
 }
 
+#login-page input {
+    color: #333;
+    width: 60%;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#login-page #login-picture {
+    color:white;
+}
+
+#login-page input:focus , #login-page input[type="file"]:focus {
+    outline: none;
+    border-color: #4ffa62;
+    box-shadow: 0 0 5px #4ffa62;
+}
+
+
 #scoreboard-page {
     flex-direction: column;
     align-items: center;
@@ -167,6 +189,8 @@ body {
 .low-time {
     animation: pulse 1s ease-in-out infinite;
 }
+
+
 
 .game-area {
     margin: 15px auto;

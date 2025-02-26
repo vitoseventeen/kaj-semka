@@ -23,7 +23,18 @@
 </nav>
 <main>
     <section class="main-section">
-        <div id="play-page">
+        <div id="login-page">
+            <h2 id="login-header">Enter your credentials:</h2>
+            <label for="login-name">
+                <input type="text" id="login-name" placeholder="Enter your name" required minlength="3" maxlength="20">
+            </label>
+            <label for="login-picture" id="login-picture-label">
+                <input type="file" id="login-picture" accept="image/*" draggable="true">
+            </label>
+        </div>
+
+
+        <div id="play-page" hidden> <!-- TODO: DELETE HIDDEN -->
             <h2 id="game-header">Play the game</h2>
             <div class="game-area" id="game-area" hidden>
                 <p id="timer"></p>
@@ -33,12 +44,13 @@
             </div>
             <button type="button" id="play-button" class="play-button">Start</button>
         </div>
-    </section>
 
-    <div id="scoreboard-page" hidden>
-        <h2 id="result-area"></h2>
-        <button type="reset" id="reset-button" class="reset-button">Reset</button>
-    </div>
+
+        <div id="scoreboard-page" hidden>
+            <h2 id="result-area"></h2>
+            <button type="reset" id="reset-button" class="reset-button">Reset</button>
+        </div>
+    </section>
 </main>
 <footer class="footer">
     Created by Vitalii Stepaniuk &copy; 2025
