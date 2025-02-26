@@ -96,9 +96,10 @@ body {
     transition: color 0.5s ease;
 }
 
-.play-button {
+.play-button, .login-button {
     background-color: #fff;
     padding: 12px 25px;
+    margin-bottom: 9px;
     border-radius: 8px;
     font-size: 18px;
     cursor: pointer;
@@ -106,7 +107,7 @@ body {
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.play-button:hover {
+.play-button:hover, .login-button:hover {
     box-shadow: 0 0 10px #4ffa62, 0 0 20px #4ffa62, 0 0 30px #4ffa62;
 }
 
@@ -267,6 +268,11 @@ body {
     }
 
     .play-button {
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+
+    .login-button {
         padding: 10px 15px;
         font-size: 16px;
     }

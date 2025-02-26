@@ -3,6 +3,8 @@
     sound for background,
     different languages.
     ADD ERROR COUNT
+
+    FIXME: when user visit other page the login window is shown or doesn't shown
 */
 
 const wordDisplay = document.getElementById("word-display");
@@ -17,6 +19,15 @@ const scoreboardPage = document.getElementById("scoreboard-page");
 const showScoreboardPage = document.getElementById("a-scoreboard");
 const showPlayPage = document.getElementById("a-play");
 const resetButton = document.getElementById("reset-button");
+
+
+
+const loginNameInput = document.getElementById("login-name");
+const loginPictureInput = document.getElementById("login-picture");
+const loginPictureLabel = document.getElementById("login-picture-label");
+const loginButton = document.getElementById("login-button");
+
+
 const GAME_TIME = 60;
 
 async function loadRandomWords() {
@@ -272,9 +283,8 @@ window.addEventListener('beforeunload', (e) => {
 
 // login page
 
-const loginPictureInput = document.getElementById("login-picture");
-const loginPictureLabel = document.getElementById("login-picture-label");
 
+// Drag and drop
 loginPictureLabel.addEventListener("dragover", (e) => {
     e.preventDefault();
     loginPictureLabel.classList.add("dragover");
@@ -291,4 +301,23 @@ loginPictureLabel.addEventListener("drop", (e) => {
         loginPictureInput.files = e.dataTransfer.files;
         e.dataTransfer.clearData();
     }
+});
+
+loginButton.addEventListener("click", () => {
+    const nickname = loginNameInput.value.trim();
+    if (nickname.length < 3 || nickname.length > 20) {
+        alert("Please enter a nickname between 3 and 20 characters.");
+        return;
+    }
+    // reset picture if file is not an image
+    let file = loginPictureInput.files[0];
+    if (file !== undefined) {
+        if (!file.type.startsWith("image/")) {
+            loginPictureInput.value = "";
+            alert("Please upload an image file.");
+            return;
+        }
+    }
+    document.getElementById("login-page").hidden = true;
+    document.getElementById("play-page").hidden = false;
 });
