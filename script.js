@@ -390,4 +390,5 @@ exitButton.addEventListener("click", () => {
     document.getElementById("play-page").hidden = true;
     document.getElementById("scoreboard-page").hidden = true;
     exitButton.hidden = true;
+    location.reload();
 });
