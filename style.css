@@ -5,7 +5,7 @@
 }
 
 html {
-    background: url("background.png") no-repeat center center fixed;
+    background: url("img/background.png") no-repeat center center fixed;
     background-size: cover;
     font-family: 'consolas', sans-serif;
 }
@@ -98,6 +98,7 @@ body {
 
 /* Scoreboard Table Styles */
 #scoreboard-table {
+
     width: 100%;
     border-collapse: collapse;
     margin: 20px auto;

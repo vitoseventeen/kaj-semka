@@ -134,7 +134,7 @@ class TypingGame {
     saveScore(score) {
         let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
         const nickname = localStorage.getItem("nickname") || "Anonymous";
-        const avatar = localStorage.getItem("avatar") || "default_avatar.png";
+        const avatar = localStorage.getItem("avatar") || "img/default_avatar.png";
         const currentDate = new Date().toLocaleString('en-GB', {
             month: 'short',
             day: 'numeric',
@@ -376,7 +376,7 @@ loginButton.addEventListener("click", () => {
         reader.readAsDataURL(file);
     } else {
         localStorage.setItem("nickname", nickname);
-        localStorage.setItem("avatar", "default_avatar.png");
+        localStorage.setItem("avatar", "img/default_avatar.png");
         document.getElementById("login-page").hidden = true;
         document.getElementById("play-page").hidden = false;
         exitButton.hidden = false;
