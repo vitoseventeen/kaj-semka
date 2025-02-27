@@ -13,10 +13,10 @@ const resetButton = document.getElementById("reset-button");
 
 const loginNameInput = document.getElementById("login-name");
 const loginPictureInput = document.getElementById("login-picture");
-const loginPictureLabel = document.getElementById("login-picture-label");
 const loginButton = document.getElementById("login-button");
 const exitButton = document.getElementById("exit-button");
 
+//TODO: BACK TO 60 SECONDS, 15 ONLY FOR TESTING
 const GAME_TIME = 15;
 
 async function loadRandomWords() {
