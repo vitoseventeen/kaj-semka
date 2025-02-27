@@ -1,11 +1,3 @@
-/* TODO:
-    sound for background,
-    different languages.
-    ADD ERROR COUNT
-
-    FIXME: when user visit other page the login window is shown or doesn't shown
-*/
-
 const wordDisplay = document.getElementById("word-display");
 const gameInput = document.getElementById("game-input");
 const gameInputLabel = document.getElementById("game-input-label");
@@ -19,14 +11,12 @@ const showScoreboardPage = document.getElementById("a-scoreboard");
 const showPlayPage = document.getElementById("a-play");
 const resetButton = document.getElementById("reset-button");
 
-
-
 const loginNameInput = document.getElementById("login-name");
 const loginPictureInput = document.getElementById("login-picture");
 const loginPictureLabel = document.getElementById("login-picture-label");
 const loginButton = document.getElementById("login-button");
+const exitButton = document.getElementById("exit-button");
 
-// TODO: set back to 60 sec
 const GAME_TIME = 15;
 
 async function loadRandomWords() {
@@ -113,6 +103,7 @@ class TypingGame {
     async startGame() {
         this.isRunning = true;
         this.isPaused = false;
+        exitButton.hidden = true;
         playButton.hidden = true;
         this.currentIndex = 0;
         this.totalChars = 0;
@@ -139,12 +130,11 @@ class TypingGame {
             this.finishGame();
         }
     }
+
     saveScore(score) {
-        // Retrieve existing scoreboard or initialize an empty array
         let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
         const nickname = localStorage.getItem("nickname") || "Anonymous";
         const avatar = localStorage.getItem("avatar") || "default_avatar.png";
-        // Get the current date in a readable English format
         const currentDate = new Date().toLocaleString('en-GB', {
             month: 'short',
             day: 'numeric',
@@ -153,15 +143,12 @@ class TypingGame {
             minute: '2-digit',
             hour12: false
         });
-
-        // Add the new record
         scoreboard.push({
             avatar: avatar,
             nickname: nickname,
             score: score,
             date: currentDate
         });
-        // Sort by highest score first
         scoreboard.sort((a, b) => b.score - a.score);
         localStorage.setItem("scoreboard", JSON.stringify(scoreboard));
     }
@@ -179,16 +166,13 @@ class TypingGame {
         const roundedScore = Math.round(cpm);
         this.wordDisplay.textContent = `Your result is: ${roundedScore} symbols per minute!`;
         localStorage.setItem("result", roundedScore.toString());
-
-        // Save the score into the scoreboard
         this.saveScore(roundedScore);
-
         playButton.innerText = "Play again";
         playButton.hidden = false;
         gameInput.hidden = true;
         gameInputLabel.hidden = true;
+        exitButton.hidden = false;
     }
-
 
     pauseGame() {
         if (this.timerId) {
@@ -242,8 +226,6 @@ class TypingGame {
             }, 50);
         }
     }
-
-
 }
 
 let game = new TypingGame(wordDisplay, gameInput, timerDisplay);
@@ -268,18 +250,15 @@ function handlePageSwitch(callback) {
 }
 
 function showResult() {
+    document.getElementById("login-page").hidden = true;
     playPage.hidden = true;
     scoreboardPage.hidden = false;
-
     const scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
     const tableBody = document.querySelector("#scoreboard-table tbody");
     tableBody.innerHTML = "";
-
     if (scoreboard.length > 0) {
         scoreboard.forEach(entry => {
             const tr = document.createElement("tr");
-
-            // Avatar
             const tdAvatar = document.createElement("td");
             const img = document.createElement("img");
             img.src = entry.avatar;
@@ -288,26 +267,18 @@ function showResult() {
             img.height = 50;
             tdAvatar.appendChild(img);
             tr.appendChild(tdAvatar);
-
-            // Nickname
             const tdNickname = document.createElement("td");
             tdNickname.textContent = entry.nickname;
             tr.appendChild(tdNickname);
-
-            // Typing Speed (score)
             const tdScore = document.createElement("td");
             tdScore.textContent = entry.score + " spm";
             tr.appendChild(tdScore);
-
-            // Date
             const tdDate = document.createElement("td");
             tdDate.textContent = entry.date;
             tr.appendChild(tdDate);
-
             tableBody.appendChild(tr);
         });
     } else {
-        // Message when there are no scores yet
         const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = 4;
@@ -317,30 +288,47 @@ function showResult() {
     }
 }
 
+function requireLogin(callback) {
+    if (!localStorage.getItem("nickname")) {
+        alert("Please log in to continue!");
+        document.getElementById("login-page").hidden = false;
+        document.getElementById("play-page").hidden = true;
+        document.getElementById("scoreboard-page").hidden = true;
+        return;
+    }
+    callback();
+}
 
 showScoreboardPage.addEventListener("click", () => {
-    handlePageSwitch(showResult);
+    requireLogin(() => {
+        handlePageSwitch(() => {
+            document.getElementById("login-page").hidden = true;
+            showResult();
+        });
+    });
+});
+
+showPlayPage.addEventListener("click", () => {
+    requireLogin(() => {
+        handlePageSwitch(() => {
+            document.getElementById("login-page").hidden = true;
+            playPage.hidden = false;
+            scoreboardPage.hidden = true;
+            if (game.isPaused) {
+                const resume = confirm("Do you want to resume the game? \nPress OK to resume or Cancel to start a new game.");
+                if (resume) {
+                    game.resumeGame();
+                } else {
+                    game.startGame();
+                }
+            }
+        });
+    });
 });
 
 resetButton.addEventListener("click", () => {
     localStorage.removeItem("scoreboard");
     showResult();
-});
-
-
-showPlayPage.addEventListener("click", () => {
-    handlePageSwitch(() => {
-        playPage.hidden = false;
-        scoreboardPage.hidden = true;
-        if (game.isPaused) {
-            const resume = confirm("Do you want to resume the game? \nPress OK to resume or Cancel to start a new game.");
-            if (resume) {
-                game.resumeGame();
-            } else {
-                game.startGame();
-            }
-        }
-    });
 });
 
 window.addEventListener('beforeunload', (e) => {
@@ -350,25 +338,17 @@ window.addEventListener('beforeunload', (e) => {
     }
 });
 
-// login page
-
-
-// Drag and drop
-loginPictureLabel.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    loginPictureLabel.classList.add("dragover");
-});
-
-loginPictureLabel.addEventListener("dragleave", () => {
-    loginPictureLabel.classList.remove("dragover");
-});
-
-loginPictureLabel.addEventListener("drop", (e) => {
-    e.preventDefault();
-    loginPictureLabel.classList.remove("dragover");
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        loginPictureInput.files = e.dataTransfer.files;
-        e.dataTransfer.clearData();
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("nickname")) {
+        document.getElementById("login-page").hidden = true;
+        document.getElementById("play-page").hidden = false;
+        document.getElementById("scoreboard-page").hidden = true;
+        exitButton.hidden = false;
+    } else {
+        document.getElementById("login-page").hidden = false;
+        document.getElementById("play-page").hidden = true;
+        document.getElementById("scoreboard-page").hidden = true;
+        exitButton.hidden = true;
     }
 });
 
@@ -391,14 +371,23 @@ loginButton.addEventListener("click", () => {
             localStorage.setItem("avatar", e.target.result);
             document.getElementById("login-page").hidden = true;
             document.getElementById("play-page").hidden = false;
+            exitButton.hidden = false;
         };
         reader.readAsDataURL(file);
     } else {
-        // Use a default avatar if none is provided
         localStorage.setItem("nickname", nickname);
         localStorage.setItem("avatar", "default_avatar.png");
         document.getElementById("login-page").hidden = true;
         document.getElementById("play-page").hidden = false;
+        exitButton.hidden = false;
     }
 });
 
+exitButton.addEventListener("click", () => {
+    localStorage.removeItem("nickname");
+    localStorage.removeItem("avatar");
+    document.getElementById("login-page").hidden = false;
+    document.getElementById("play-page").hidden = true;
+    document.getElementById("scoreboard-page").hidden = true;
+    exitButton.hidden = true;
+});

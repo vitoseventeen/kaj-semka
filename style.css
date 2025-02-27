@@ -111,6 +111,8 @@ body {
     background-color: #296a0a;
 }
 
+
+
 #scoreboard-table th,
 #scoreboard-table td {
     padding: 12px 15px;
@@ -152,10 +154,10 @@ body {
 }
 
 
-.play-button, .login-button {
+.play-button, .login-button, .exit-button {
     background-color: #fff;
     padding: 12px 25px;
-    margin-bottom: 9px;
+    margin: 9px;
     border-radius: 8px;
     font-size: 18px;
     cursor: pointer;
@@ -165,6 +167,10 @@ body {
 
 .play-button:hover, .login-button:hover {
     box-shadow: 0 0 10px #4ffa62, 0 0 20px #4ffa62, 0 0 30px #4ffa62;
+}
+
+.exit-button:hover {
+    box-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
 }
 
 /*center */
