@@ -21,7 +21,7 @@ const GAME_TIME = 15;
 
 async function loadRandomWords() {
     try {
-        const response = await fetch('https://random-word-api.vercel.app/api?words=120');
+        const response = await fetch('https://random-word-api.vercel.app/api?words=333');
         return await response.json();
     } catch (error) {
         console.error('Error fetching words:', error);
