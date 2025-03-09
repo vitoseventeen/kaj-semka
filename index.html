@@ -16,28 +16,27 @@
         <li class="nav-item">
             <a href="#" id="a-play">Play</a>
             <a href="#" id="a-scoreboard">Scoreboard</a>
-            <a href="#">About Us</a>
+            <a href="#" id="a-about">About Us</a>
         </li>
     </ul>
 </nav>
 <main>
     <section class="main-section">
+        <!-- Login page -->
         <div id="login-page">
             <h2 id="login-header">Hello! What's your name?</h2>
             <div class="login-area">
                 <label for="login-name">
                     <input type="text" id="login-name" placeholder="Enter your name" required minlength="3" maxlength="20">
                 </label>
-
                 <h2>Choose your avatar:</h2>
-
                 <label for="login-picture" id="login-picture-label">
                     <input type="file" id="login-picture" accept="image/*" draggable="true">
                 </label>
             </div>
             <button type="button" id="login-button" class="login-button">Next</button>
         </div>
-
+        <!-- Play page -->
         <div id="play-page" hidden>
             <h2 id="game-header">Play the game</h2>
             <div class="game-area" id="game-area" hidden>
@@ -48,9 +47,8 @@
             </div>
             <button type="button" id="play-button" class="play-button">Start</button>
             <button id="exit-button" class="exit-button" hidden>Exit</button>
-
         </div>
-
+        <!-- Scoreboard page -->
         <div id="scoreboard-page" hidden>
             <table id="scoreboard-table">
                 <thead>
@@ -67,7 +65,29 @@
             </table>
             <button type="button" id="reset-button" class="reset-button">Reset Scoreboard</button>
         </div>
-
+        <!-- About Us page -->
+        <div id="about-page" hidden>
+            <h2>About Us</h2>
+            <p>
+                I've been at a computer since I was a child, and I've always loved the feeling of typing on a keyboard.
+                This passion inspired me to create LeetKeys—a simple, fun website where you can test your typing speed and challenge yourself.
+            </p>
+            <h3>Why LeetKeys?</h3>
+            <p>
+                I built this site using pure JavaScript, HTML, and CSS. My goal was to make it as user-friendly and enjoyable as possible.
+                Here are some of the key features:
+            </p>
+            <ul>
+                <li>Drag and Drop Avatar Upload: Easily upload your own avatar to add a personal touch to your profile.</li>
+                <li>Local Storage: Your scores, login details, and preferences are saved in your browser, so your data stays with you between sessions.</li>
+                <li>Real-Time Feedback and Sound Effects: The game gives instant visual feedback and plays sounds when you type correctly or make mistakes.</li>
+                <li>Smooth Animations: Enjoy subtle animations like fading, shaking, and sliding effects that make the experience lively and dynamic.</li>
+                <li>Responsive Design: The site looks great on all devices, ensuring a smooth experience whether you're on a computer or mobile.</li>
+            </ul>
+            <p>
+                Every part of LeetKeys is crafted to make testing your typing speed a delightful experience. Enjoy the game, and happy typing!
+            </p>
+        </div>
     </section>
 </main>
 <footer class="footer">

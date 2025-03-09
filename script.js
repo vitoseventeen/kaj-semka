@@ -1,3 +1,6 @@
+'use strict';
+
+// Selecting DOM elements
 const wordDisplay = document.getElementById("word-display");
 const gameInput = document.getElementById("game-input");
 const gameInputLabel = document.getElementById("game-input-label");
@@ -9,22 +12,23 @@ const playPage = document.getElementById("play-page");
 const scoreboardPage = document.getElementById("scoreboard-page");
 const showScoreboardPage = document.getElementById("a-scoreboard");
 const showPlayPage = document.getElementById("a-play");
+const showAboutPage = document.getElementById('a-about');
 const resetButton = document.getElementById("reset-button");
-
 const loginNameInput = document.getElementById("login-name");
 const loginPictureInput = document.getElementById("login-picture");
 const loginButton = document.getElementById("login-button");
 const exitButton = document.getElementById("exit-button");
+const aboutPage = document.getElementById('about-page');
 
-//TODO: BACK TO 60 SECONDS, 5 ONLY FOR TESTING
-const GAME_TIME = 60;
+const GAME_TIME = 60; // Total game time in seconds
 
+// Function to fetch random words from API or fallback to a local file
 async function loadRandomWords() {
     try {
         const response = await fetch("https://random-word-api.vercel.app/api?words=333");
         return await response.json();
     } catch (error) {
-        console.error("Error fetching words:", error);
+        console.error("Error fetching words from API:", error);
         try {
             const localResponse = await fetch("words.json");
             return await localResponse.json();
@@ -35,6 +39,7 @@ async function loadRandomWords() {
     }
 }
 
+// TypingGame class encapsulates all game logic
 class TypingGame {
     constructor(wordDisplay, gameInput, timerDisplay) {
         this.wordDisplay = wordDisplay;
@@ -42,7 +47,6 @@ class TypingGame {
         this.timerDisplay = timerDisplay;
         this.words = [];
         this.currentIndex = 0;
-        this.currentWord = "";
         this.totalChars = 0;
         this.timeLimit = GAME_TIME;
         this.timerId = null;
@@ -51,20 +55,25 @@ class TypingGame {
         this.isRunning = false;
         this.isPaused = false;
         this.isErrorPlaying = false;
+
+        // Sound effects
         this.correctSound = new Audio("sounds/correct.mp3");
         this.incorrectSound = new Audio("sounds/incorrect.mp3");
         this.clockSound = new Audio("sounds/clock.mp3");
         this.ringSound = new Audio("sounds/ring.mp3");
     }
 
+    // Load words from API or fallback file
     async loadWords() {
         this.words = await loadRandomWords();
     }
 
+    // Render the current word and the next two words with visual highlighting
     renderWords() {
-        let html = "";
         const currentWord = this.words[this.currentIndex] || "";
         let renderedCurrent = "";
+
+        // Loop through current word letters and apply highlighting for correct letters
         for (let i = 0; i < currentWord.length; i++) {
             const letter = currentWord[i];
             const typedLetter = this.gameInput.value[i] || "";
@@ -72,7 +81,9 @@ class TypingGame {
                 ? `<span class="correct-letter">${letter}</span>`
                 : `<span>${letter}</span>`;
         }
-        html += `<span class="current-word">${renderedCurrent}</span>`;
+
+        // Combine current word and next two future words
+        let html = `<span class="current-word">${renderedCurrent}</span>`;
         for (let j = 1; j < 3; j++) {
             const nextWord = this.words[this.currentIndex + j];
             if (nextWord) {
@@ -82,17 +93,21 @@ class TypingGame {
         this.wordDisplay.innerHTML = html;
     }
 
+    // Start the countdown timer and update the display each second
     startTimer() {
         this.timerDisplay.textContent = this.timeLimit;
         this.timerId = setInterval(() => {
             this.timeLimit--;
             this.timerDisplay.textContent = this.timeLimit;
+
+            // Play clock sound and add visual effect when time is low
             if (this.timeLimit <= 10) {
                 this.clockSound.play();
                 this.timerDisplay.classList.add("low-time");
             } else {
                 this.timerDisplay.classList.remove("low-time");
             }
+
             if (this.timeLimit <= 0) {
                 clearInterval(this.timerId);
                 this.finishGame();
@@ -100,6 +115,7 @@ class TypingGame {
         }, 1000);
     }
 
+    // Start a new game session
     async startGame() {
         this.isRunning = true;
         this.isPaused = false;
@@ -109,19 +125,23 @@ class TypingGame {
         this.totalChars = 0;
         this.timeLimit = GAME_TIME;
         this.overallStartTime = Date.now();
+
         await this.loadWords();
         this.startTimer();
         this.nextWord();
-        if (gameInput.hidden || gameInputLabel.hidden) {
-            gameInput.hidden = false;
+
+        // Unhide input elements if they were hidden
+        if (this.gameInput.hidden || gameInputLabel.hidden) {
+            this.gameInput.hidden = false;
             gameInputLabel.hidden = false;
         }
     }
 
+    // Proceed to the next word or finish the game if finished
     nextWord() {
         if (!this.isRunning) return;
+
         if (this.currentIndex < this.words.length) {
-            this.currentWord = this.words[this.currentIndex];
             this.gameInput.value = "";
             this.gameInput.style.borderColor = "#ccc";
             this.gameInput.focus();
@@ -131,10 +151,13 @@ class TypingGame {
         }
     }
 
+    // Save the user's score in localStorage
     saveScore(score) {
-        let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
+        const scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
         const nickname = localStorage.getItem("nickname") || "Anonymous";
         const avatar = localStorage.getItem("avatar") || "img/default_avatar.png";
+
+        // Get formatted current date and time
         const currentDate = new Date().toLocaleString("en-GB", {
             month: "short",
             day: "numeric",
@@ -143,37 +166,38 @@ class TypingGame {
             minute: "2-digit",
             hour12: false
         });
-        scoreboard.push({
-            avatar: avatar,
-            nickname: nickname,
-            score: score,
-            date: currentDate
-        });
+
+        scoreboard.push({ avatar, nickname, score, date: currentDate });
         scoreboard.sort((a, b) => b.score - a.score);
         localStorage.setItem("scoreboard", JSON.stringify(scoreboard));
     }
 
+    // Finish the game, calculate the score, and update the UI
     finishGame() {
         if (this.timerId) clearInterval(this.timerId);
         this.clockSound.pause();
         this.ringSound.play();
         this.timerDisplay.classList.remove("low-time");
+
         this.isRunning = false;
         this.isPaused = false;
-        const overallEndTime = Date.now();
-        const elapsedTime = (overallEndTime - this.overallStartTime) / 1000;
+
+        const elapsedTime = (Date.now() - this.overallStartTime) / 1000;
         const cpm = (this.totalChars / elapsedTime) * GAME_TIME;
         const roundedScore = Math.round(cpm);
+
         this.wordDisplay.textContent = `Your result is: ${roundedScore} symbols per minute!`;
         localStorage.setItem("result", roundedScore.toString());
         this.saveScore(roundedScore);
+
         playButton.innerText = "Play again";
         playButton.hidden = false;
-        gameInput.hidden = true;
+        this.gameInput.hidden = true;
         gameInputLabel.hidden = true;
         exitButton.hidden = false;
     }
 
+    // Pause the game and timer
     pauseGame() {
         if (this.timerId) {
             clearInterval(this.timerId);
@@ -184,6 +208,7 @@ class TypingGame {
         }
     }
 
+    // Resume the game from paused state
     resumeGame() {
         if (this.isPaused) {
             this.timeLimit = this.pausedTimeLeft;
@@ -192,13 +217,11 @@ class TypingGame {
         }
     }
 
-    isActive() {
-        return this.isRunning && !this.isPaused;
-    }
-
+    // Check user input against the current word
     checkInput() {
         const inputValue = this.gameInput.value;
         const currentWord = this.words[this.currentIndex] || "";
+
         if (currentWord.startsWith(inputValue)) {
             this.gameInput.style.borderColor = "green";
             this.gameInput.classList.remove("shake");
@@ -214,7 +237,10 @@ class TypingGame {
                 this.gameInput.classList.remove("shake");
             }, 300);
         }
+
         this.renderWords();
+
+        // If the word is completely typed correctly, move to next word
         if (inputValue === currentWord) {
             this.correctSound.play();
             this.wordDisplay.classList.add("fade-out");
@@ -226,20 +252,26 @@ class TypingGame {
             }, 50);
         }
     }
+
+    // Check if the game is currently active (running and not paused)
+    isActive() {
+        return this.isRunning && !this.isPaused;
+    }
 }
 
-let game = new TypingGame(wordDisplay, gameInput, timerDisplay);
+// Create a new game instance
+const game = new TypingGame(wordDisplay, gameInput, timerDisplay);
 
+// Event listeners for game actions
 playButton.addEventListener("click", () => {
     gameArea.hidden = false;
     gameHeader.hidden = true;
     game.startGame();
 });
 
-gameInput.addEventListener("input", () => {
-    game.checkInput();
-});
+gameInput.addEventListener("input", () => game.checkInput());
 
+// Handle page switch with confirmation if game is active
 function handlePageSwitch(callback) {
     if (game.isActive()) {
         const confirmSwitch = confirm("Are you sure you want to leave the game?");
@@ -249,17 +281,22 @@ function handlePageSwitch(callback) {
     callback();
 }
 
+// Display the scoreboard results
 function showResult() {
     document.getElementById("login-page").hidden = true;
     playPage.hidden = true;
     scoreboardPage.hidden = false;
+    aboutPage.hidden = true;
+
     const scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
     const tableBody = document.querySelector("#scoreboard-table tbody");
     tableBody.innerHTML = "";
+
     if (scoreboard.length > 0) {
         scoreboard.forEach(entry => {
-
             const tr = document.createElement("tr");
+
+            // Avatar cell
             const tdAvatar = document.createElement("td");
             const img = document.createElement("img");
             img.src = entry.avatar;
@@ -268,15 +305,22 @@ function showResult() {
             img.height = 50;
             tdAvatar.appendChild(img);
             tr.appendChild(tdAvatar);
+
+            // Nickname cell
             const tdNickname = document.createElement("td");
             tdNickname.textContent = entry.nickname;
             tr.appendChild(tdNickname);
+
+            // Score cell
             const tdScore = document.createElement("td");
-            tdScore.textContent = entry.score + " spm";
+            tdScore.textContent = `${entry.score} spm`;
             tr.appendChild(tdScore);
+
+            // Date cell
             const tdDate = document.createElement("td");
             tdDate.textContent = entry.date;
             tr.appendChild(tdDate);
+
             tableBody.appendChild(tr);
         });
     } else {
@@ -289,6 +333,7 @@ function showResult() {
     }
 }
 
+// Check if the user is logged in before navigating
 function requireLogin(callback) {
     if (!localStorage.getItem("nickname")) {
         alert("Please log in to continue!");
@@ -300,6 +345,7 @@ function requireLogin(callback) {
     callback();
 }
 
+// Navigation event listeners
 showScoreboardPage.addEventListener("click", () => {
     requireLogin(() => {
         handlePageSwitch(() => {
@@ -314,7 +360,11 @@ showPlayPage.addEventListener("click", () => {
         handlePageSwitch(() => {
             document.getElementById("login-page").hidden = true;
             playPage.hidden = false;
+            aboutPage.hidden = true;
             scoreboardPage.hidden = true;
+
+
+            // If the game is paused, ask the user to resume or restart
             if (game.isPaused) {
                 const resume = confirm("Do you want to resume the game? \nPress OK to resume or Cancel to start a new game.");
                 if (resume) {
@@ -327,11 +377,25 @@ showPlayPage.addEventListener("click", () => {
     });
 });
 
+// About page
+
+showAboutPage.addEventListener('click', () => {
+    handlePageSwitch(() => {
+        document.getElementById("login-page").hidden = true;
+        playPage.hidden = true;
+        scoreboardPage.hidden = true;
+        aboutPage.hidden = false;
+
+    });
+});
+
+// Reset scoreboard data
 resetButton.addEventListener("click", () => {
     localStorage.removeItem("scoreboard");
     showResult();
 });
 
+// Warn user before leaving the page if the game is active
 window.addEventListener("beforeunload", (e) => {
     if (game.isActive()) {
         e.preventDefault();
@@ -339,6 +403,7 @@ window.addEventListener("beforeunload", (e) => {
     }
 });
 
+// Initialize page state on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
     if (localStorage.getItem("nickname")) {
         document.getElementById("login-page").hidden = true;
@@ -353,19 +418,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+// Login logic with avatar image handling
 loginButton.addEventListener("click", () => {
     const nickname = loginNameInput.value.trim();
     if (nickname.length < 3 || nickname.length > 20) {
         alert("Please enter a nickname between 3 and 20 characters.");
         return;
     }
-    let file = loginPictureInput.files[0];
+
+    const file = loginPictureInput.files[0];
     if (file) {
         if (!file.type.startsWith("image/")) {
             loginPictureInput.value = "";
             alert("Please upload an image file.");
             return;
         }
+
         const reader = new FileReader();
         reader.onload = function(e) {
             localStorage.setItem("nickname", nickname);
@@ -384,6 +452,7 @@ loginButton.addEventListener("click", () => {
     }
 });
 
+// Logout logic
 exitButton.addEventListener("click", () => {
     localStorage.removeItem("nickname");
     localStorage.removeItem("avatar");
