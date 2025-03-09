@@ -93,14 +93,9 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
+    /*animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;*/
 }
 
-#scoreboard-page h2 {
-    color: #4ffa62;
-    transition: color 0.5s ease;
-}
-
-/* Scoreboard Table Styles */
 #scoreboard-table {
     width: 100%;
     border-collapse: collapse;
@@ -210,6 +205,10 @@ body {
     animation: pulse 1s ease-in-out infinite;
 }
 
+.login-area {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
 
 .game-area {
     margin: 15px auto;
@@ -304,6 +303,37 @@ body {
     0%   { transform: scale(1); color: red; }
     50%  { transform: scale(1.15); color: #ffcccc; }
     100% { transform: scale(1); color: red; }
+}
+
+@media print {
+    * {
+        background: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    body {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'consolas', sans-serif;
+        background-color: white;
+    }
+
+    .container, .game-area, .footer {
+        display: none;
+    }
+
+    .nav-items, .main-section, #scoreboard-table {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: none !important;
+        box-shadow: none !important;
+    }
+
+    .nav-item a, #scoreboard-table th, #scoreboard-table td {
+        color: black !important;
+    }
 }
 
 @media (max-width: 600px) {

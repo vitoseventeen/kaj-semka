@@ -16,21 +16,21 @@ const loginPictureInput = document.getElementById("login-picture");
 const loginButton = document.getElementById("login-button");
 const exitButton = document.getElementById("exit-button");
 
-//TODO: BACK TO 60 SECONDS, 15 ONLY FOR TESTING
-const GAME_TIME = 15;
+//TODO: BACK TO 60 SECONDS, 5 ONLY FOR TESTING
+const GAME_TIME = 60;
 
 async function loadRandomWords() {
     try {
-        const response = await fetch('https://random-word-api.vercel.app/api?words=333');
+        const response = await fetch("https://random-word-api.vercel.app/api?words=333");
         return await response.json();
     } catch (error) {
-        console.error('Error fetching words:', error);
+        console.error("Error fetching words:", error);
         try {
-            const localResponse = await fetch('words.json');
+            const localResponse = await fetch("words.json");
             return await localResponse.json();
         } catch (localError) {
-            console.error('Error fetching local words:', localError);
-            return ['error', 'error', 'error'];
+            console.error("Error fetching local words:", localError);
+            return ["error", "error", "error"];
         }
     }
 }
@@ -135,12 +135,12 @@ class TypingGame {
         let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
         const nickname = localStorage.getItem("nickname") || "Anonymous";
         const avatar = localStorage.getItem("avatar") || "img/default_avatar.png";
-        const currentDate = new Date().toLocaleString('en-GB', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
+        const currentDate = new Date().toLocaleString("en-GB", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
             hour12: false
         });
         scoreboard.push({
@@ -258,6 +258,7 @@ function showResult() {
     tableBody.innerHTML = "";
     if (scoreboard.length > 0) {
         scoreboard.forEach(entry => {
+
             const tr = document.createElement("tr");
             const tdAvatar = document.createElement("td");
             const img = document.createElement("img");
@@ -331,10 +332,10 @@ resetButton.addEventListener("click", () => {
     showResult();
 });
 
-window.addEventListener('beforeunload', (e) => {
+window.addEventListener("beforeunload", (e) => {
     if (game.isActive()) {
         e.preventDefault();
-        e.returnValue = '';
+        e.returnValue = "";
     }
 });
 
