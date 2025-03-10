@@ -380,12 +380,14 @@ showPlayPage.addEventListener("click", () => {
 // About page
 
 showAboutPage.addEventListener('click', () => {
-    handlePageSwitch(() => {
-        document.getElementById("login-page").hidden = true;
-        playPage.hidden = true;
-        scoreboardPage.hidden = true;
-        aboutPage.hidden = false;
+    requireLogin(() => {
+        handlePageSwitch(() => {
+            document.getElementById("login-page").hidden = true;
+            playPage.hidden = true;
+            scoreboardPage.hidden = true;
+            aboutPage.hidden = false;
 
+        });
     });
 });
 
